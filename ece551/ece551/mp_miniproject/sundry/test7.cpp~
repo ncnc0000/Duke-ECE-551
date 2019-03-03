@@ -1,0 +1,94 @@
+#include <cstddef>   // std::size_t
+#include <iostream>  // std::cout
+#include <map>
+#include <sstream>
+#include <string>  // std::string
+#include <vector>
+using namespace std;
+
+string get_var(string & str) {
+  map<string, string> var;
+  var["A"] = "ls";
+  var["B"] = "-al";
+  var["C"] = "/etc/passwd";
+  map<string, string>::iterator it = var.find(str);
+  //don't find the key
+  if (it == var.end()) {
+    cout << "$: cannot access corresponding variable" << endl;
+    return "nothing";
+  }
+  else {
+    str = it->second;
+    return str;
+  }
+}
+
+int main() {
+  map<string, string> var;
+  var["A"] = "ls";
+  var["B"] = "-al";
+  var["C"] = "/etc/passwd";
+  vector<string> _command;
+  _command.push_back("$A$B$C");
+  _command.push_back("$ACD$B");
+  _command.push_back("$$$");
+  //_command.push_back("asdafg adafgnad");
+  size_t found;
+  for (size_t i = 0; i < _command.size(); ++i) {
+    string in = _command[i];
+    found = _command[i].find_first_of('$', 0);
+    //don't find $ in ith element of vector or $ is not first char, don't need to change it.
+    if (found == string::npos) {
+      continue;
+    }  //find $ and it's the first character
+    else {
+      //get the rest of string after $ sign
+      string str;
+      string str1 = _command[i].substr(0, found);
+      str += str1;
+      //cout << str << endl;
+      string sub_str = _command[i].substr(found);
+      //cout << sub_str << endl;
+      size_t found1 = sub_str.find_first_of('$', 1);
+      if (found1 == string::npos) {
+        map<string, string>::iterator it = var.find(sub_str);
+        if (it != var.end()) {
+          sub_str = it->second;
+          str += sub_str;
+          cout << str << endl;
+          _command[i] = str;
+        }
+      }
+      else {
+        while (found1 != string::npos) {
+          str1 = sub_str.substr(0, found1);
+          // cout << str1 << endl;
+          map<string, string>::iterator it = var.find(str1);
+          if (it != var.end()) {
+            str1 = it->second;
+          }
+          str += str1;
+          //cout << str << endl;
+          sub_str = sub_str.substr(found1 + 1);
+          //cout << sub_str << endl;
+          found1 = sub_str.find_first_of('$', 0);
+          if (found1 == string::npos) {
+            map<string, string>::iterator it = var.find(str1);
+            if (it != var.end()) {
+              str1 = it->second;
+            }
+            str += str1;
+          }
+          else {
+            continue;
+          }
+        }
+        cout << str << endl;
+        _command[i] = str;
+      }
+    }
+  }
+  for (vector<string>::iterator it = _command.begin(); it != _command.end(); ++it) {
+    cout << *it << endl;
+  }
+}

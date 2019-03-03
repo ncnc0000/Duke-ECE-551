@@ -1,0 +1,110 @@
+#include <fcntl.h>
+#include <signal.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+void Execute(vector<string> & _command) {
+  //first parameter of execve
+  for (vector<string>::iterator it = _command.begin(); it != _command.end(); ++it) {
+    if (it->compare(">") == 0 || it->compare("<") == 0 || it->compare("2>") == 0) {
+    }
+  }
+  vector<string> v1;
+  const char * __path = _command.front().c_str();
+  int id, envpc = 0, argc = 0;
+  //second parameter of execve
+  char ** argv = NULL;
+  //third parameter of execve
+  char ** envp = NULL;
+  int status = 0;
+  size_t found = _command[0].find_last_of('/');
+  string str = _command[0].substr(found + 1);
+  //put all arguments in argv
+  argv = (char **)realloc(argv, (argc + 1) * sizeof(*argv));
+  argv[argc] = const_cast<char *>(str.c_str());
+  argc++;
+  for (std::size_t i = 1; i < _command.size(); ++i) {
+    argv = (char **)realloc(argv, (argc + 1) * sizeof(*argv));
+    argv[argc] = const_cast<char *>(_command[i].c_str());
+    argc++;
+  }
+  //add NULL at the end of argv;
+  argv = (char **)realloc(argv, (argc + 1) * sizeof(*argv));
+  argv[argc] = NULL;
+  argc++;
+  //put env virables in envp
+  for (vector<string>::iterator it = v1.begin(); it != v1.end(); ++it) {
+    envp = (char **)realloc(envp, (envpc + 1) * sizeof(*envp));
+    envp[envpc] = const_cast<char *>(it->c_str());
+    envpc++;
+  }
+  //add NULL at the end of envp
+  envp = (char **)realloc(envp, (envpc + 1) * sizeof(*envp));
+  envp[envpc] = NULL;
+  envpc++;
+  //create child process
+  pid_t childpid = fork();
+  if (childpid < 0) {
+    cout << "Fork Error!" << endl;
+    exit(EXIT_FAILURE);
+  }
+  if (childpid == 0) {
+    execve(__path, argv, envp);
+    //wouldn't be here unless execve fail, free argv and envp;
+    fprintf(stderr, "%s: no such file or directory\n", __path);
+    free(argv);
+    free(envp);
+    int i = kill(getpid(), SIGKILL);
+    if (i != 0) {
+      cout << "kill: fail" << endl;
+    }
+  }
+  else {
+    do {
+      //call waitpid and let parent process wait until child process finished. free argv and envp;
+      id = waitpid(childpid, &status, 0);
+      free(argv);
+      free(envp);
+      if (id == -1) {
+        cout << "waitpid" << endl;
+        exit(EXIT_FAILURE);
+      }
+      if (WIFEXITED(status)) {
+        cout << "Program exited with status " << WEXITSTATUS(status) << endl;
+      }
+      else if (WIFSIGNALED(status)) {
+        cout << "Program was killed by signal " << WTERMSIG(status) << endl;
+      }
+      else if (WIFSTOPPED(status)) {
+        cout << "stopped by signal " << WSTOPSIG(status) << endl;
+      }
+      else if (WIFCONTINUED(status)) {
+        cout << "continued " << WIFCONTINUED(status) << endl;
+      }
+    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+  }
+}
+int main(int argc, char ** argv) {
+  int fd; /*file descriptor to the file we will redirect ls's output*/
+
+  if ((fd = open("dirlist.txt", O_RDWR | O_CREAT)) == -1) { /*open the file */
+    perror("open");
+    return 1;
+  }
+
+  dup2(fd, STDOUT_FILENO); /*copy the file descriptor fd into standard output*/
+  dup2(fd, STDERR_FILENO); /* same, for the standard error */
+  close(fd);               /* close the file descriptor as we don't need it more  */
+
+  /*execl ls */
+  execl("/bin/ls", "ls", "-la", (char *)0);
+
+  return 0;
+}

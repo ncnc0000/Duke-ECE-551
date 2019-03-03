@@ -1,0 +1,173 @@
+NOTE:(open full screen for reading this README)
+	This shell finish all functionalities of stap 1, 2 and 3
+	There are five files(main.cpp, command.h, command.cpp, shell_operating.h and shell_operating.	     cpp)
+	for main.cpp, there is a loop which ask for input command, it will only break when user test 	     "exit"(case sensitive) or getline raise eofbit/failbit/badbit.
+	for shell_operating.h and shell_operating.cpp, these two files define some field and methods 	     of printing promption and get current working address and home address.
+	for command.h and command.cpp, these two files is for parsing and executing command.
+	And there is a Makefile, the executable file name is myShell.
+	This shell program takes no arguments, just run ./myShell and you can type any command, the s        hell only break if you type "exit" 
+	some special button cannot be used in this program such as "TAB", during usr input period, we 	     cannot use some keys.
+		
+-----------------------------------------------------------------------------------------------------
+#For step one:
+     1. Run ./myShell, the program will print the promption "myShell$", along with the current working directory. 
+For example, my testing directory is "/ece551/mp_miniproject". So the entire output will be: myShell:~/ece551/mp_miniproject$ 
+     2. Run ./myShell, after the promption show up, type the full path of the executable filename alongwith its arguments, it will show the output of the program. All test can be added as many as spaces as long as it's a valid command.
+
+1), there is a simple program which will print out "Here 1".
+Type in /home/cn104/ece551/mp_miniproject/ex, you will see "Here 1" and"Program exited with status 0"
+You can also type relative path ./ex, which will have same result.
+
+2), you can test on ls.
+Type in /bin/ls -al /etc/passwd, you will see "-rw-r--r-- 1 root root 18784 Sep  9 18:29 /etc/passwd", along with "Program exited with status 0"
+note: you cannot type /bin/ls -al /etc/passwd
+You can also try ls -al /etc/passwd, which will have same result. You can also test ls with other arguments. 
+
+3), you can test on the input will as many as spaces as long as it's a vaild command.
+Type in "      ls       -al        /etc/passwd      ", it will have same result as example two.
+
+4), if you try to execute the file that does't exist , it will show a warning message.
+Type in  ./asdaf, you will see "./asdaf: no such file or directory", and "Program was killed by signal 9", the child process is killed.
+
+5), Type in /lasdjawhgawjdio(a non-exist directory), you will see similar output above.
+
+6), Type in asdwaifhghajd(random input), you will see "asdwaifhghajd:command not found".
+
+7), Type "Enter(\n)" or any number of space, you will see "myShell:~/ece551/mp_miniproject$ "(/ece551/mp_miniproject is my working directory). it will do nothing, just showing promption and ask another input.
+
+8), Type in exit, the program will exit.
+
+-----------------------------------------------------------------------------------------------------
+#For step two
+     1.This shell first set "ECE551PATH",
+Type in export, you will see "ECE551PATH = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games". Just type in export can check current environment varibles. (step 3 will have more export tests).
+     2.The command that does not have a forward slash (/) in it have already tested in step one. For example, type in ls, it will show all the files in current directory.
+     3.For '\', there is a testfile named test5, it will print out the number of the input argument and the specfic value.
+
+1), Type in ./test5 a b 23 , you will see "4","test5","a","b","23" and Program exited with status 0
+
+2), Type in ./test5        a           b     23, it will have same result as previous one.
+
+3), Type in ./test5  a\ b c\ \ d, you will see "3","test5","a b","c  d" and Program exited with status 0, the ' ' after '\' is include in the input.
+
+4), Type in ./test5 a\  b c \ d, you will see "5","test5","a ","b","c"," d" and Program exited with status 0, the ' ' after '\' is include in the input.
+
+5), Type in ./test5 a\b a\\b a   \\\\b   \d\d\c, you will see "6","test5","ab","a\b","a","\\b","ddc" and Program exited with status 0, which is same as the output as bash.
+
+-----------------------------------------------------------------------------------------------------
+#For step three
+     1.For cd to change current directory(my testing directory is /ece551/mp_miniproject), current working directory has already been added to promption.
+
+1), Type in cd .., you will see:myShell:~/ece551/$.
+    Type another cd .., you will see:myShell:~$
+    Type another cd .., you will see:myShell:/home$
+
+2), Type in cd cn104, cd ece551, cd mp_miniproject, you will see:myShell:~/ece551/mp_miniproject$
+
+3), Type in cd, you will see:myShell:~$
+
+4), Type in cd /home, you will see:myShell:/home$
+
+5), Type in cd ~, you will see:myShell:~$
+
+6), Type in cd -, you will see:/home/cn104
+
+7), Type in cd sdafgaf, you will see:Error: No such file or directory
+
+    2.For set, it has to have at least 3 input values---"set"command, the key and the value, and key has to be the combination of letter/number/_, no other symbols.
+
+1), Type in set A, you will see: set: Invild set command, try set Varname Value.
+
+2), Type in set A$ B, you will see: set: Invaild var name
+
+3), Type in set A B, There is no output at this time.
+
+4), Type in set, you will see: A = B (just type set, you can see all varibles and their value)
+
+5), Type in "    set     C     D", and type set again to see the output, you will see: A = B C = D
+
+6), Type in "   set   A    B       D", and type set again to see the output, you will see:
+A = B       D, C = D (varible A's value has been changed to B       D).
+
+7), Type in export to check envrionment varibles, you will see: ECE551PATH = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games. No varible has been added to environment varibles.
+
+    3.For $var, when we type $var, it will try to find the key in local varibles, if it find the key exchange var to it's corrsponding value, if not, do nothing.
+Before we test this function, we need to set few varibles.
+       set A l, set B s, set C -al, set D /etc/passwdd 
+       set 1 hello, set 11 world, set 111 ece551
+       set ABC "this is $ test", set AB "Here"
+
+1), Type in "$$", you will see: $$:command not found, which is correct, since varible name can't have other symbols, we can't find varible name containing $.
+
+2), Type in "$$$$$$$$$$$", you will see:$$$$$$$$$$$:command not found, which is also correct, the reason is same as above.
+
+3), Type in "$A", you will see: l:command not found, the val A has been replaced with 'l'.
+
+4), Type in "$A$B $C $D",which suppose to be ls -al /etc/passwd, you will see: -rw-r--r-- 1 root root 18784 Sep  9 18:29 /etc/passwd.
+
+5), Type in "     $A$B      $C     $D      ", you will see: -rw-r--r-- 1 root root 18784 Sep  9 18:29 /etc/passwd.
+
+6), Type in "  $111  ", you will see: ece551:command not found, since we replace the var will longest possible value. So, it will only change to the value of 111
+
+7), Type in "    $1111  ", you will see: ece5511:command not found, change 111 to ece551 and keep the last '1'.
+
+8), Type in "cd$A-$BAdddddddd$$ABCDEFoopodw$111$$q1$1111$$$$", you will see: cdl-sAdddddddd$"This is $ test"DEFoopodwece551$$q1ece5511$$$$:command not found, cd will remain the same, $A will be replace with 'l',$B will be replaced with 's', $ABC will be replaced with "This is $ test", $111 will be replaced with ece551, other character will remain the same.
+
+    4. For export, export will add the corresponding varible to envrionment varible. It has to have two part input--"export"command and the varible name.
+
+1), Type in export CDWFGAD, you will see: export: no such varible
+
+2), Type in export other varibles name which contains the symbol will get: export: no such varible, since set command can't set the varible whose name contains the symbol except for letter, number and '-'.
+
+3), Type in export A B, you will see: export: Invild export command, try export Varname , Since export only takes one argument.
+
+4), Type export to see current environment, you will see: ECE551PATH = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+
+5), Type export A(add A to varible before) and type export again, you will see: A = B       D,
+ECE551PATH = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+, varible A has been added to environment varibles.
+
+6), Type in export $C, (suppose we have set A B, set C A) and export again, you will see: A = B, ECE551PATH = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games, $Cwill be replaced with A, which means we actually export A into environment varible, So A = B is here.
+
+7), Everytime, we export a varible into environment, we will input it into our execve() third parameter. We can also call command "env" or "printenv" to print all envrionment varible. (suppose we have set user cn104, set miniproject myShell, set finish_status of course not!!!),if we export these varibles to environment. we will see:
+A = B(this one is the varible exported before)      
+ECE551PATH = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+finish_status = of course not!!!
+miniproject = myShell
+user = cn104
+Program exited with status 0
+
+    5.for ins, ins will increase the corrsponding value by 1 at each time, if the varible has not been added to local varible or the original varible value is not a number(based 10), it will set the varible value to 0 and increase by 1; we use unsigned long int to store the value, the value can only be 0 - 4,294,967,295.
+
+1), Type in inc, you will see all the local varibles with their value
+
+2), Type in "    inc    ", you will see same result as above.
+
+3), Type in inc A B, you will see: inc: Invild inc command, try inc Varname. Since inc only take one argument.
+
+4), Type in inc &&, you will see: inc: Invild var name, since inc will modify local varibles, we don't allow set var name with other symbols except for letter/number/_, So in "inc", we can only take var name with letter/number and '_'.
+
+5), Type in inc M, suppose we didn't set M before and type inc again, you will see: M = 1
+
+6), Type in inc M and type inc again, you will see: M = 2;
+
+7), Type in "    inc   M   ", you will see: M = 3;
+
+8), Type in inc N, suppose we set N equal to 21234(base10)and type inc again, you will see: N = 21234
+
+9), Type in inc K, suppose we set K equal to Hello(string) and type inc again, you will see: K = 1
+
+10), Type in inc L, suppose we set L equal to 0.234(floating) and type inc again, you will see: L = 1
+
+11), Type in inc O, suppose we set 0 equal to 0x123(hex)and type inc again, you will see: O = 1
+
+Here is valgrind report, no memory leaks for these testing.
+==48607== 
+==48607== HEAP SUMMARY:
+==48607==     in use at exit: 0 bytes in 0 blocks
+==48607==   total heap usage: 6,725 allocs, 6,725 frees, 1,662,911 bytes allocated
+==48607== 
+==48607== All heap blocks were freed -- no leaks are possible
+==48607== 
+==48607== For counts of detected and suppressed errors, rerun with: -v
+==48607== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

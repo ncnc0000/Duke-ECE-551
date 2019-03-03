@@ -1,0 +1,4 @@
+#include "set.h"
+
+class bstset : public Set<>
+{};

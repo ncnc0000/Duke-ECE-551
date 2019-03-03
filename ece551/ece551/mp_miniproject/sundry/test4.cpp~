@@ -1,0 +1,13 @@
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <string>
+#include <vector>
+
+typedef std::vector<std::string> stringvec;
+
+int main() {
+  stringvec v;
+  read_directory(".", v);
+  std::copy(v.begin(), v.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
+}

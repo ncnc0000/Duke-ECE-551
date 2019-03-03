@@ -1,0 +1,128 @@
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+string ClearSpace(string in);
+string ContinueInput();
+
+vector<string> ArgvTransform(string in) {
+  vector<string> out;
+  const char SPACE = ' ', PIPE = '|', LINE = '\\';
+  in = ClearSpace(in);
+  if (in[in.size() - 1] == ' ')
+    in.erase(in.size() - 1, 1);
+  unsigned int pos = 0, init = 0;
+  while (1) {
+    if (pos >= in.size()) {
+      string s = in.substr(init, pos - init);
+      out.push_back(s);
+      break;
+    }
+    else if (in[pos] == SPACE) {
+      if (in[pos + 1] == SPACE) {
+        if (in[in.size() - 1] == ' ') {
+          for (size_t i = in.size() - 1; i > pos; i--) {
+            if (in[i] == ' ' && in[i - 1] != ' ') {
+              pos = i - 1;
+            }
+            else {
+              pos = in.size() - 1;
+            }
+            string s = in.substr(init, pos - init);
+            out.push_back(s);
+            break;
+          }
+        }
+      }
+    }
+    else if (in[pos] == PIPE) {
+      string s = in.substr(init, pos - init);
+      out.push_back(s);
+      out.push_back("|");
+      init = pos + 1;
+    }
+    else if (in[pos] == LINE) {
+      string s = in.substr(init, pos - init);
+      out.push_back(s);
+      out.push_back("\\");
+      init = pos + 1;
+      if (!in[init])
+        break;
+    }
+    pos++;
+  }
+  if (out[out.size() - 1] == "\\") {
+    vector<string> insert;
+    insert = ArgvTransform(ContinueInput());
+    out.insert(out.end(), insert.begin(), insert.end());
+  }
+  return out;
+}
+/*string ClearSpace(string in) {
+  for (unsigned int i = 0; i < in.size(); i++) {
+    if (in[i] == ' ') {
+      int j = i + 1, number = 0;
+      while (in[j] == ' ') {
+        j++;
+        number++;
+      }
+      in.erase(i + 1, number);
+    }
+  }
+  return in;
+  }*/
+string ClearSpace(string in) {
+  int t = 0;
+  for (unsigned int i = 0; i < in.size(); i++) {
+    if (in[i] == '\\') {
+      i += 2;
+    }
+    if (in[i] == ' ') {
+      int j = i + 1, number = 0;
+      while (in[j] == ' ') {
+        j++;
+        number++;
+      }
+      in.erase(i + 1, number);
+      t++;
+    }
+    if (t == 1) {
+      if (in[0] == ' ') {
+        in.erase(0, 1);
+        t--;
+      }
+    }
+    if (t == 2) {
+      string u = in.substr(0, 4);
+      if (u == "set ")
+        break;
+    }
+  }
+  return in;
+}
+
+string ContinueInput() {
+  cout << '>';
+  string in;
+  if (!getline(cin, in))
+    in = "exit";
+  return in;
+}
+
+int main() {
+  string str;
+  while (getline(cin, str)) {
+    cout << "Myshell" << endl;
+    if (str == "\n") {
+      continue;
+    }
+
+    vector<string> v = ArgvTransform(str);
+    for (vector<string>::iterator it = v.begin(); it != v.end(); ++it) {
+      cout << *it << endl;
+      cout << v.size() << endl;
+    }
+  }
+  return 0;
+}

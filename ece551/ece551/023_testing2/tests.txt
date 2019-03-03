@@ -1,0 +1,13 @@
+aaaaa bbbbb
+aaaaaa bbbbbb
+aaaaa 12345
+abcde abcde
+aaabb aaacd
+aaaa bbbb
+a
+aabbc aabbe
+a s c
+aaaab aaaaa
+aaaaa aaaa
+aaaaa aaaaaa
+abbcd aabcd 

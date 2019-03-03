@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#include <iostream>
+#include <map>
+#include <string>
+
+using namespace std;
+
+int main() {
+  char * argv[] = {(char *)"ls", (char *)"-al", (char *)"/etc/passwd", NULL};
+  char * envp[] = {(char *)"PATH=/bin", NULL};
+  execve("/bin/ls", argv, envp);
+  perror("!!!");
+  return 0;
+}

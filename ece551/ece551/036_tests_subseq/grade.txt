@@ -1,0 +1,41 @@
+Grading at 09/14/2018:23:07:36.217276
+For commit ID 7eebecec4f4b01ae7e85be234b29b70031c2a762
+-------------------------------------
+**Testing correct implementation**
+correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!
+-------------------------------------
+**Testing broken implementation 10**
+correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!Wrong!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!Wrong!
+-------------------------------------
+**Testing broken implementation 11**
+correct!correct!correct!correct!Wrong!correct!correct!correct!correct!Wrong!
+-------------------------------------
+**Testing broken implementation 1**
+correct!correct!correct!correct!correct!correct!correct!correct!correct!Wrong!correct!correct!correct!correct!correct!correct!correct!correct!correct!Wrong!
+-------------------------------------
+**Testing broken implementation 2**
+Wrong!Wrong!
+-------------------------------------
+**Testing broken implementation 3**
+correct!correct!correct!correct!correct!correct!correct!Wrong!correct!correct!correct!correct!correct!correct!correct!Wrong!
+-------------------------------------
+**Testing broken implementation 4**
+Wrong!Wrong!
+-------------------------------------
+**Testing broken implementation 5**
+correct!correct!correct!correct!correct!Wrong!correct!correct!correct!correct!correct!Wrong!
+-------------------------------------
+**Testing broken implementation 6**
+correct!correct!correct!correct!Wrong!correct!correct!correct!correct!Wrong!
+-------------------------------------
+**Testing broken implementation 7**
+correct!Wrong!correct!Wrong!
+-------------------------------------
+**Testing broken implementation 8**
+correct!Wrong!correct!Wrong!
+-------------------------------------
+**Testing broken implementation 9**
+correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!Wrong!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!correct!Wrong!
+All test programs were handled correctly
+
+Overall Grade: PASSED

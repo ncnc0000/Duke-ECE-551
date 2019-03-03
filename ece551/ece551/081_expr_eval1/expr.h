@@ -1,0 +1,48 @@
+#include <sstream>
+#include <string>
+
+class Expression
+{
+ public:
+  Expression() {}
+  virtual std::string toString() const = 0;
+  virtual ~Expression() {}
+};
+
+class NumExpression : public Expression
+{
+  long n;
+
+ public:
+  NumExpression(long v) : n(v) {}
+  std::string toString() const {
+    //std::string s = std::to_string(n);
+    std::stringstream ss;
+    ss << n;
+    std::string str = ss.str();
+    return str;
+  }
+
+  ~NumExpression() {}
+};
+
+class PlusExpression : public Expression
+{
+  std::string str1;
+  std::string str2;
+
+ public:
+  PlusExpression(Expression * lhs, Expression * rhs) {
+    str1 = lhs->toString();
+    str2 = rhs->toString();
+    delete lhs;
+    delete rhs;
+  }
+  std::string toString() const {
+    std::stringstream ss;
+    ss << "(" << str1 << " + " << str2 << ")";
+    std::string str = ss.str();
+    return str;
+  }
+  ~PlusExpression() {}
+};

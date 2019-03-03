@@ -1,0 +1,11 @@
+#include "circle.h"
+
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "point.h"
+
+Circle::Circle(Point p, double n) : radius(n), center(p) {}
+
+void Circle::move(double dx, double dy) {}

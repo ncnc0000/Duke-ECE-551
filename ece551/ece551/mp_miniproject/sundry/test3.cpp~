@@ -1,0 +1,134 @@
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#include <algorithm>
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
+using namespace std;
+
+int ListDir(string & path, string & command) {
+  vector<string> dir_name;
+  DIR * dir = opendir(path.c_str());
+  struct dirent * dir_read;
+  while ((dir_read = readdir(dir)) != NULL)
+    dir_name.push_back(dir_read->d_name);
+  closedir(dir);
+  sort(dir_name.begin(), dir_name.end());
+  for (unsigned int i = 0; i < dir_name.size(); i++) {
+    //cout << dir_name[i] << '\t';
+    if (dir_name[i].compare(command) == 0) {
+      return 1;
+    }
+  }
+  // cout << endl;
+  return 0;
+}
+
+string check_path(string & path) {
+  map<string, string> env_var;
+  //vector<string> command;
+  string final_path("nothing");
+  //command.push_back("ls");
+  vector<string> v1;
+  int n = 0;
+  env_var["PATH"] = getenv("PATH");
+  map<string, string>::iterator it = env_var.find("PATH");
+  if (it != env_var.end()) {
+    string str = it->second;
+    size_t pos = str.find_first_of(":");
+    while (pos != string::npos) {
+      v1.push_back(str.substr(0, pos));
+      str = str.substr(pos + 1);
+      pos = str.find_first_of(":");
+    }
+  }
+  for (vector<string>::iterator i = v1.begin(); i != v1.end(); ++i) {
+    cout << *i << endl;
+    n = ListDir(*i, path);
+    if (ListDir(*i, path)) {
+      *i += "/";
+      *i += path;
+      final_path = *i;
+      return final_path;
+    }
+  }
+  cout << path << ":command not found" << endl;
+  return final_path;
+}
+
+void execute(vector<string> _command) {
+  //vector<string> _command;
+  //_command.push_back("ls");
+  //_command.push_back("ls");
+  const char * __path = _command.front().c_str();
+  int id, status;
+  pid_t childpid;
+  char ** argv = NULL;
+  char ** envp = NULL;
+  int argc = 0;
+  for (std::size_t i = 1; i < _command.size(); ++i) {
+    argv = (char **)realloc(argv, (argc + 1) * sizeof(*argv));
+    argv[argc] = const_cast<char *>(_command[i].c_str());
+    argc++;
+  }
+  argv = (char **)realloc(argv, (argc + 1) * sizeof(*argv));
+  argv[argc] = NULL;
+  argc++;
+  envp = (char **)realloc(envp, 2 * sizeof(*envp));
+  envp[0] = const_cast<char *>(getenv("PATH"));
+  envp[1] = NULL;
+  childpid = fork();
+  if (childpid < 0) {
+    cout << "Fork Error!" << endl;
+    exit(EXIT_FAILURE);
+  }
+  if (childpid == 0) {
+    execve(__path, argv, envp);
+    cout << "!!!" << endl;
+  }
+  else {
+    id = waitpid(childpid, &status, WUNTRACED | WNOHANG);
+    free(argv);
+    free(envp);
+    if (id == -1) {
+      cout << "waitpid" << endl;
+      exit(EXIT_FAILURE);
+    }
+    if (WIFEXITED(status)) {
+      cout << "exited, status=" << WEXITSTATUS(status) << endl;
+    }
+    else if (WIFSIGNALED(status)) {
+      cout << "killed by signal " << WTERMSIG(status) << endl;
+    }
+    else if (WIFSTOPPED(status)) {
+      cout << "stopped by signal " << WSTOPSIG(status) << endl;
+    }
+  }
+}
+
+int main() {
+  vector<string> _command;
+  vector<string> new_command;
+  _command.push_back("ls");
+  _command.push_back("ls");
+  _command.push_back("-al");
+  _command.push_back("/etc/passwd");
+  if (_command.front()[0] == '/') {
+    execute(_command);
+  }
+  else {
+    string str = check_path(_command.front());
+    if (str.compare("nothing") != 0) {
+      new_command.push_back(str);
+      for (size_t i = 1; i < _command.size(); ++i) {
+        new_command.push_back(_command[i]);
+      }
+      execute(new_command);
+    }
+  }
+  return 0;
+}

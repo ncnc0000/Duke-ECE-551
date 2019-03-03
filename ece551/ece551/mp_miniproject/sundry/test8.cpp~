@@ -1,0 +1,88 @@
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
+using namespace std;
+
+int main() {
+  map<string, string> var;
+  var["$"] = "ls";
+  var["AB"] = "-al";
+  var["C"] = "/etc/passwd";
+  vector<string> _command;
+  _command.push_back("C$A");
+  _command.push_back("$ACD");
+  _command.push_back("$$$");
+  string in("$$$$$");
+  size_t found = in.find_first_of('$', 0);
+  string str, temp;
+  string str1 = in.substr(0, found);
+  str += str1;
+  string sub_str = in.substr(found);
+  size_t found1 = sub_str.find_first_of('$', 1);
+  if (found1 == string::npos) {
+    for (size_t i = sub_str.size() - 1; i > 0; --i) {
+      temp = sub_str;
+      map<string, string>::iterator it = var.find(sub_str.substr(1, i));
+      if (it != var.end()) {
+        temp = it->second;
+        temp += sub_str.substr(1 + i, sub_str.size() - i - 1);
+        break;
+      }
+    }
+    str += temp;
+  }
+  else {
+    while (found1 != string::npos) {
+      str1 = sub_str.substr(0, found1);
+      temp = str1;
+      //cout << str1 << endl;
+      /*map<string, string>::iterator it = var.find(str1.substr(1));
+      if (it != var.end()) {
+        str1 = it->second;
+      }
+      str += str1;*/
+      for (size_t i = str1.size() - 1; i > 0; --i) {
+        //cout << temp << endl;
+        map<string, string>::iterator it = var.find(str1.substr(1, i));
+        if (it != var.end()) {
+          //cout << "HERE" << endl;
+          temp = it->second;
+          temp += str1.substr(1 + i, str1.size() - i - 1);
+          break;
+        }
+      }
+      cout << temp << endl;
+      str += temp;
+      //cout << str << endl;
+      sub_str = sub_str.substr(found1);
+      cout << sub_str << endl;
+      found1 = sub_str.find_first_of('$', 1);
+    }
+    /*map<string, string>::iterator it = var.find(sub_str.substr(1));
+    if (it != var.end()) {
+      sub_str = it->second;
+    }
+    str += sub_str;*/
+    cout << sub_str << endl;
+    temp = sub_str;
+    for (size_t i = sub_str.size() - 1; i > 0; --i) {
+      map<string, string>::iterator it = var.find(sub_str.substr(1, i));
+      if (it != var.end()) {
+        temp = it->second;
+        temp += sub_str.substr(1 + i, sub_str.size() - i - 1);
+        break;
+      }
+    }
+    str += temp;
+  }
+  cout << str << endl;
+  /*while (found1 != string::npos) {
+    str1 = sub_str.substr(1, found1);
+    }*/
+
+  //size_t found = str.find_first_of('$', 1);
+  //string substr = str.substr(1);
+  //cout << found << "        " << endl;
+  return 0;
+}

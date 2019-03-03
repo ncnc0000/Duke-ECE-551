@@ -1,0 +1,16 @@
+#include <cstdio>
+#include <cstdlib>
+
+#include "ll2.h"
+
+void testList() {}
+
+int main(void) {
+  LinkedList<int> ila = LinkedList<int>();
+  ila.addBack(1);
+  ila.addBack(2);
+  ila.addBack(3);
+
+  LinkedList ilb = LinkedList();
+  ilb = ila;
+}

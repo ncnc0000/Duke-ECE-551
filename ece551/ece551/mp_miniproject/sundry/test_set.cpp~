@@ -1,0 +1,28 @@
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
+using namespace std;
+
+int main() {
+  map<string, string> set_var;
+  string in("   set    A     B    C    ");
+  size_t found = in.find_first_not_of(" ", 0);
+  if (found == string::npos || in == "") {
+    cout << "oops" << endl;
+  }
+  size_t pos = in.substr(found).find_first_of(" ");
+  string str = in.substr(found, pos);
+  cout << str << endl;
+  if (str == "set") {
+  }
+  else {
+    //clear space send to command;
+  }
+  vector<string> _command;
+  //_command.push_back("set");
+  //_command.push_back("A");
+  //_command.push_back("1");
+
+  return 0;
+}

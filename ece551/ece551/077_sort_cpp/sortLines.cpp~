@@ -1,0 +1,19 @@
+#include <algorithm>
+#include <iostream>
+#include <vector>
+//#include <string.h>
+using std::cin;
+using std::string;
+using std::vector;
+bool sort(string i, string j) {
+  return (i < j);
+}
+
+int main(void) {
+  string word;
+  vector<string> v1;
+  while (cin >> word) {
+    v1.push_back(word);
+  }
+  sort(v1.begin(), v1.end());
+}
